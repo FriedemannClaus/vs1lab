@@ -10,6 +10,7 @@
 
 html {
   box-sizing: border-box;
+  width: 100%;
 }
 
 * {
@@ -38,11 +39,10 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-a {
-  color: var(--link-color);
-}
 
 /* ### TODO ### Styles for other HTML elements */
 
@@ -109,29 +109,156 @@ a {
 
 /* ### TODO ### Styles for Header Component */
 
-/* ... your code here ... */
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+  min-height: 3rem;
+}
 
+.header__image {
+  min-height: 50px;
+  min-width: 50px;
+  width: 3%;
+  height: 3%;
+}
 
 /* ### TODO ### Styles for Main Component */
-
+.main {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+}
 /* ... your code here ... */
 
 
 /* ### TODO ### Styles for Tagging component */
+.tagging {
+  padding: 1rem;
+  margin: 5px;
+  display: flex;
+  flex-flow: column wrap;
+  column-gap: 10px;
+  justify-content: left;
+}
+.tagging h2 {
+  margin-left: 1rem;
+}
 
+.tagging fieldset {
+  padding: 1rem;
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: left;
+}
+
+.tagging legend {
+  font-weight: bold;
+}
+
+
+.tagging input {
+  padding: 5px;
+  margin: 5px;
+}
 /* ... your code here ... */
 
 
 /* ### TODO ### Styles for Discovery component */
+.discovery {
+  padding: 1rem;
+  margin: 5px;
+}
 
-/* ... your code here ... */
+.discovery__search {
+  padding: 5px 5px 5px 0;
+  width: 100%;
+}
+
+.discovery fieldset {
+  padding: 5px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.discovery legend {
+  font-weight: bold;
+}
+
+.discovery input {
+  padding: 5px;
+  margin: 5px;
+}
+
+.discovery__results li {
+  margin: 5px 5px 5px 1px;
+  background: var(--background-color);
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.discovery__map {
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  width: auto;
+  height: auto;
+}
 
 
 /* ### TODO ### Styles for Footer Component */
-
-/* ... your code here ... */
+.footer {
+  min-height: 5rem;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
 
 
 /* ### TODO ### Media Queries */
+
+@media screen and (max-width: 930px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: center;
+  }
+
+  .tagging {
+    padding: 1rem;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+  }
+
+  .tagging h2 {
+    margin-left: 0;
+  }
+
+  .tagging fieldset {
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-left: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: stretch;
+    align-items: baseline;
+  }
+}
+
 
 /* ... your code here ... */
