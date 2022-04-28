@@ -105,19 +105,26 @@ class MapManager {
  */
 function updateLocation() {
     var callback = (locationHelper) => {
-        latitude = locationHelper.latitude();
-        longitude = locationHelper.longitude();
+        latitude = locationHelper.latitude;
+        longitude = locationHelper.longitude;
 
-        document.getElementById(inp_latitude).value = latitude;
-        document.getElementById(inp_longitude).value = longitude;
-        document.getElementById(inp_hiddenLatitude).value = latitude;
-        document.getElementById(inp_hiddenLongitude).value = longitude;
+
+
+        document.getElementById("inp_latitude").value = latitude;
+        document.getElementById("inp_longitude").value = longitude;
+        document.getElementById("inp_hiddenLatitude").value = latitude;
+        document.getElementById("inp_hiddenLongitude").value = longitude;
         
+        url = mapManager.getMapUrl(latitude, longitude);
+        console.log(url);
+        document.getElementById("mapView").setAttribute("src", url);
+
     }
     LocationHelper.findLocation(callback);
 }
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
+    mapManager = new MapManager("s72AvC6w7Fu2ebMMzexcfcsMAd95r5zg")
     updateLocation();
 });
