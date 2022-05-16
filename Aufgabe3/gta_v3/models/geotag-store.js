@@ -1,5 +1,7 @@
 // File origin: VS1LAB A3
 
+const GeoTagExamples = require("./geotag-examples");
+
 /**
  * This script is a template for exercise VS1lab/Aufgabe3
  * Complete all TODOs in the code documentation.
@@ -24,6 +26,36 @@
  * - Keyword matching should include partial matches from name or hashtag fields. 
  */
 class InMemoryGeoTagStore{
+
+    private GeoTag[] geotags;
+
+    public InMemoryGeoTagStore() {
+        geoTagExamples = new GeoTagExamples;
+        this.geotags = geoTagExamples.gettagList();
+    }
+
+    public void addGeoTag(geotag) {
+
+    }
+
+    public void removeGeoTag(geotagName) {
+        
+    }
+
+    public void getNearbyGeoTags(location) {
+        radius = 10; //some radius
+        
+    }
+
+    public void searchNearbyGeoTags(location) {
+        GeoTag[] nearbyGeoTags = getNearbyGeoTags(location);
+        GeoTag[] result = new GeoTag[]
+
+        for(int i = 0; i < nearbyGeoTags.length; i++) {
+
+        }
+
+    }
 
     // TODO: ... your code here ...
 

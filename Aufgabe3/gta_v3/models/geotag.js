@@ -11,6 +11,8 @@
  */
 class GeoTag {
 
+    name
+    hashtag
     // TODO: ... your code here ...
     
 }
