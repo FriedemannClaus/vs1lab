@@ -27,29 +27,44 @@ const GeoTagExamples = require("./geotag-examples");
  */
 class InMemoryGeoTagStore{
 
-    private GeoTag[] geotags;
+    #geoTags = [];
 
-    public InMemoryGeoTagStore() {
-        geoTagExamples = new GeoTagExamples;
-        this.geotags = geoTagExamples.gettagList();
+    constructor() {
+        this.geoTags = GeoTagExamples.tagList();
     }
 
-    public void addGeoTag(geotag) {
-
+    addGeoTag(geoTag) {
+        geoTags.push(geoTag);
     }
 
-    public void removeGeoTag(geotagName) {
-        
+    removeGeoTag(geoTagName) {
+        for(i = 0; i < geoTags.length; i++) {
+            if(this.geoTags[i].name() == geoTagName) {
+                this.geoTags.splice(i,1);
+            }
+        }
     }
 
-    public void getNearbyGeoTags(location) {
+    getNearbyGeoTags(latitude, longitude) {
         radius = 10; //some radius
-        
+        result = [];
+
+        for(i = 0; i < geoTags.length; i++) {
+            if(distance(this.geoTags[i].latitude(), latitude, this.geoTags[i].longitude, longitude) <= radius) {
+                result.push(this.geoTags[i]);
+            }
+        }
     }
 
-    public void searchNearbyGeoTags(location) {
-        GeoTag[] nearbyGeoTags = getNearbyGeoTags(location);
-        GeoTag[] result = new GeoTag[]
+    //er scheint die Funktion distance nicht zu erkennen
+
+    #distance(latitude1, longitude1, latitude2, longitude2) {
+        return sqrt((latitude1 - latitude2) ^ 2 + (longitude1 - longitude2) ^ 2)
+    }
+
+    searchNearbyGeoTags(location) {
+        nearbyGeoTags = getNearbyGeoTags(location);
+        result = [];
 
         for(int i = 0; i < nearbyGeoTags.length; i++) {
 
