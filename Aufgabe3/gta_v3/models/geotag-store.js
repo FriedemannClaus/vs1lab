@@ -2,10 +2,6 @@
 
 const GeoTagExamples = require("./geotag-examples");
 
-/**
- * This script is a template for exercise VS1lab/Aufgabe3
- * Complete all TODOs in the code documentation.
- */
 
 /**
  * A class for in-memory-storage of geotags
@@ -28,7 +24,6 @@ const GeoTagExamples = require("./geotag-examples");
 class InMemoryGeoTagStore{
 
     #geoTags = [];
-
     constructor() {
         this.geoTags = GeoTagExamples.tagList();
     }
@@ -45,35 +40,35 @@ class InMemoryGeoTagStore{
         }
     }
 
-    getNearbyGeoTags(latitude, longitude) {
-        radius = 10; //some radius
-        result = [];
 
+
+    getNearbyGeoTags(latitude, longitude) {
+        result = [];
+        radius = 10; //some radius
         for(i = 0; i < geoTags.length; i++) {
-            if(distance(this.geoTags[i].latitude(), latitude, this.geoTags[i].longitude, longitude) <= radius) {
+            if(this.#distance(this.geoTags[i].latitude(), this.geoTags[i].longitude, latitude, longitude) <= radius) {
                 result.push(this.geoTags[i]);
             }
         }
     }
 
-    //er scheint die Funktion distance nicht zu erkennen
-
     #distance(latitude1, longitude1, latitude2, longitude2) {
-        return sqrt((latitude1 - latitude2) ^ 2 + (longitude1 - longitude2) ^ 2)
+        return Math.sqrt((latitude1 - latitude2) ^ 2 + (longitude1 - longitude2) ^ 2)
     }
 
-    searchNearbyGeoTags(location) {
-        nearbyGeoTags = getNearbyGeoTags(location);
+
+    searchNearbyGeoTags(latitude, longitude, keyword) {
+        nearbyGeoTags = getNearbyGeoTags(latitude, longitude);
         result = [];
 
-        for(int i = 0; i < nearbyGeoTags.length; i++) {
-
+        for(i = 0; i < nearbyGeoTags.length; i++) {
+            if((nearbyGeoTags[i].name().toLowerCase().indexOf(keyword.toLowerCase()) > -1)
+            || (nearbyGeoTags[i].hashtag().toLowerCase().indexOf(keyword.toLowerCase()) > -1)) {
+                result.push(nearbyGeoTags[i]);
+            }
         }
-
+        return result;
     }
-
-    // TODO: ... your code here ...
-
 }
 
 module.exports = InMemoryGeoTagStore
