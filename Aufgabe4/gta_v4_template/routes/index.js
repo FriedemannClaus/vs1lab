@@ -32,6 +32,8 @@ const GeoTagStore = require('../models/geotag-store');
 
 // App routes (A3)
 
+module.exports = router;
+
 /**
  * Route '/' for HTTP 'GET' requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -104,7 +106,6 @@ router.post('/discovery', (req, res) => {
   });
 })
 
-module.exports = router;
 
 // API routes (A4)
 
@@ -122,6 +123,52 @@ module.exports = router;
 
 // TODO: ... your code here ...
 
+//Warum radius 5/100?
+
+router.get('/api/geotags', (req, res) => {
+  let TagStorage = InMemoryGeoTagStore.getInstance();
+  if (req.body["latitude"] >= 0 && req.body["longitude"] >= 0) {
+    if(req.body["query"] != undefined) {
+      let tempTagList = TagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
+    } else {
+      let tempTagList = TagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 100);
+    }
+  } else {
+    if(req.body["query"] != undefined) {
+      let tempTagList = TagStorage.searchGeoTags(req.body["query"]);
+    } else {
+      let tempTagList = TagStorage.getAllGeoTags();
+    }
+  }
+
+  res.render('index', { 
+    taglist: tempTagList,
+    ejs_mapTagList: JSON.stringify(tempTagList)
+  });
+});
+
+router.post('/tagging', (req, res) => {
+  let getTagStorage = InMemoryGeoTagStore.getInstance();
+  getTagStorage.addGeoTag(new GeoTag(req.body["latitude"], req.body["longitude"], req.body["name"], req.body["hashtag"]));
+  let tempTagList = getTagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 100);
+  res.render('index', { 
+    taglist: tempTagList,
+    ejs_latitude: req.body["latitude"],
+    ejs_longitude: req.body["longitude"],
+    ejs_mapTagList: JSON.stringify(tempTagList) 
+  });
+});
+router.post('/discovery', (req, res) => {
+  let getTagStorage = InMemoryGeoTagStore.getInstance();
+  let tempTagList = getTagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
+  res.render('index', { 
+    taglist: tempTagList,
+    ejs_latitude: req.body["latitude"],
+    ejs_longitude: req.body["longitude"],
+    ejs_mapTagList: JSON.stringify(tempTagList)
+  });
+})
+
 
 /**
  * Route '/api/geotags' for HTTP 'POST' requests.
@@ -136,6 +183,15 @@ module.exports = router;
 
 // TODO: ... your code here ...
 
+router.post('/api/geotags', (req, res) => {
+  let tagStorage = InMemoryGeoTagStore.getInstance();
+  tagStorage.addGeoTag(new GeoTag(req.body["latitude"], req.body["longitude"], req.body["name"], req.body["tag"]));
+  let tempTagList = tagStorage.getAllGeoTags();
+  res.render('index', { 
+    taglist: tempTagList,
+    ejs_mapTagList: JSON.stringify(tempTagList)
+  });
+})
 
 /**
  * Route '/api/geotags/:id' for HTTP 'GET' requests.
@@ -149,6 +205,14 @@ module.exports = router;
 
 // TODO: ... your code here ...
 
+router.get('/api/geotags/:id', (req, res) => {
+  let TagStorage = InMemoryGeoTagStore.getInstance();
+  let tempGeoTag = TagStorage.getGeoTagByName(req.params());
+ //Id = name? No ID stored
+  res.render({ 
+    geoTag: JSON.stringify(tempGeoTag)
+  });
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'PUT' requests.
@@ -166,6 +230,16 @@ module.exports = router;
 
 // TODO: ... your code here ...
 
+router.put('/api/geotags/:id', (req, res) => {
+  let TagStorage = InMemoryGeoTagStore.getInstance();
+  TagStorage.removeGeoTag(req.params()); //id = name
+  TagStorage.addGeoTag(req.query());
+  tempTagList = TagStorage.getAllGeoTags();
+  res.render('index', { 
+    taglist: tempTagList,
+    ejs_mapTagList: JSON.stringify(tempTagList)
+  });
+})
 
 /**
  * Route '/api/geotags/:id' for HTTP 'DELETE' requests.
@@ -179,5 +253,15 @@ module.exports = router;
  */
 
 // TODO: ... your code here ...
+
+router.delete('/api/geotags/:id', (req, res) => {
+  let TagStorage = InMemoryGeoTagStore.getInstance();
+  TagStorage.removeGeoTag(req.params()); //id = name
+  tempTagList = TagStorage.getAllGeoTags();
+  res.render('index', { 
+    taglist: tempTagList,
+    ejs_mapTagList: JSON.stringify(tempTagList)
+  });
+})
 
 module.exports = router;

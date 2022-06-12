@@ -109,6 +109,21 @@ class InMemoryGeoTagStore{
     getAllGeoTags() {
         return this.#tagStorage
     }
+
+    /**
+     * 
+     * @returns {GeoTag[]}
+     */
+    searchGeoTags(keyword) {
+        let temp = [];
+        this.#tagStorage.forEach(item => {
+            if (item.name.includes(keyword) || (item.tag != undefined && item.tag.includes(keyword))) {
+                temp.push(item);
+            }
+        })
+
+        return temp;
+    }
 }
 
 module.exports = InMemoryGeoTagStore
