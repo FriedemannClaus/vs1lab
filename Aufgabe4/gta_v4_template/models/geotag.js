@@ -11,8 +11,11 @@ var tagId = 0
  * A class representing geotags.
  * GeoTag objects should contain at least all fields of the tagging form.
  */
+
+
+
 class GeoTag {
-    //#gtId = 0;
+    gtId = 0;
     latitude = 0;
     longitude = 0;
     /**
@@ -23,13 +26,18 @@ class GeoTag {
      * @type {String}
      */
     tag = "";
+
+
+
     // TODO: ... your code here ...
     constructor(latitude, longitude, name, tag) {
-        this.latitude = latitude
-        this.longitude = longitude
-        this.name = name
-        this.tag = tag
-        return this
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.tag = tag;
+
+        this.gtId = tagId++;
+        return this;
     }
 
 
@@ -47,6 +55,10 @@ class GeoTag {
 
     get tag() {
         return this.tag;
+    }
+
+    get id() {
+        return this.gtId;
     }
 }
 

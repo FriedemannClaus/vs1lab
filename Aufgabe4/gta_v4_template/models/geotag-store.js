@@ -66,6 +66,14 @@ class InMemoryGeoTagStore{
 
     /**
      * 
+     * @param {String} id
+     */
+     removeGeoTagById(id) {
+        this.#tagStorage = this.#tagStorage.filter(geoTag => geoTag.id != id);
+    }
+
+    /**
+     * 
      * @param {int} latitude 
      * @param {int} longitude 
      * @param {int} radius 
@@ -108,6 +116,14 @@ class InMemoryGeoTagStore{
      */
     getAllGeoTags() {
         return this.#tagStorage
+    }
+
+    /**
+     * 
+     * @param {String} name 
+     */
+    getGeoTagById(id) {
+        return this.#tagStorage.filter(geoTag => geoTag.id == id)[0];
     }
 
     /**
