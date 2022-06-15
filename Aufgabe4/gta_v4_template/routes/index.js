@@ -123,26 +123,23 @@ router.post('/discovery', (req, res) => {
 
 
 router.get('/api/geotags', (req, res) => {
-  let TagStorage = InMemoryGeoTagStore.getInstance();
-  let tempTagList = []
+  let tagStorage = InMemoryGeoTagStore.getInstance();
+  let tempTagList = [];
   if (req.body["latitude"] >= 0 && req.body["longitude"] >= 0) {
     if(req.body["query"] != undefined) { //searchterm = query!
-      tempTagList = TagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
+      tempTagList = tagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
     } else {
-      tempTagList = TagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5);
+      tempTagList = tagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5);
     }
   } else {
     if(req.body["query"] != undefined) {
-      tempTagList = TagStorage.searchGeoTags(req.body["query"]);
+      tempTagList = tagStorage.searchGeoTags(req.body["query"]);
     } else {
-      tempTagList = TagStorage.getAllGeoTags();
+      tempTagList = tagStorage.getAllGeoTags();
     }
   }
 
-  res.render('index', { 
-    taglist: tempTagList,
-    ejs_mapTagList: JSON.stringify(tempTagList)
-  });
+  res.json(JSON.stringify(tempTagList));
 });
 
 
@@ -162,12 +159,13 @@ router.get('/api/geotags', (req, res) => {
 
 router.post('/api/geotags', (req, res) => {
   let tagStorage = InMemoryGeoTagStore.getInstance();
-  tagStorage.addGeoTag(req.body()); // body/query
-  let tempTagList = tagStorage.getAllGeoTags();
-  res.render('index', { 
-    taglist: tempTagList,
-    ejs_mapTagList: JSON.stringify(tempTagList)
-  });
+  newGeoTag = JSON.parse(req.query());
+  tagStorage.addGeoTag(newGeoTag);
+  idString = this.toString(newGeoTag.getId());
+  url ='/api/geotags/'.concat(idString);
+  res.location(url);
+  res.statusCode = 201; //Code stems from the Readme
+  res.json(req.query());
 })
 
 /**
@@ -183,12 +181,9 @@ router.post('/api/geotags', (req, res) => {
 // TODO: ... your code here ...
 
 router.get('/api/geotags/:id', (req, res) => {
-  let TagStorage = InMemoryGeoTagStore.getInstance();
-  let tempGeoTag = TagStorage.getGeoTagById(req.params.id); //ID!
-  //more code
-  res.render({ 
-    geoTag: JSON.stringify(tempGeoTag)
-  });
+  let tagStorage = InMemoryGeoTagStore.getInstance();
+  let requestedGeoTag = tagStorage.getGeoTagById(req.params.id); //ID!
+  res.json(JSON.stringify(requestedGeoTag));
 });
 
 /**
@@ -208,14 +203,10 @@ router.get('/api/geotags/:id', (req, res) => {
 // TODO: ... your code here ...
 
 router.put('/api/geotags/:id', (req, res) => {
-  let TagStorage = InMemoryGeoTagStore.getInstance();
-  TagStorage.removeGeoTagById(req.params()); //id = name? no
-  TagStorage.addGeoTag(req.query());
-  tempTagList = TagStorage.getAllGeoTags();
-  res.render('index', { 
-    taglist: tempTagList,
-    ejs_mapTagList: JSON.stringify(tempTagList)
-  });
+  let tagStorage = InMemoryGeoTagStore.getInstance();
+  tagStorage.removeGeoTagById(req.params.id);
+  tagStorage.addGeoTag(JSON.parse(req.query()));
+  res.json(req.query());
 })
 
 /**
@@ -232,13 +223,11 @@ router.put('/api/geotags/:id', (req, res) => {
 // TODO: ... your code here ...
 
 router.delete('/api/geotags/:id', (req, res) => {
-  let TagStorage = InMemoryGeoTagStore.getInstance();
-  TagStorage.removeGeoTag(req.params()); //id = name
-  tempTagList = TagStorage.getAllGeoTags();
-  res.render('index', { 
-    taglist: tempTagList,
-    ejs_mapTagList: JSON.stringify(tempTagList)
-  });
+  let tagStorage = InMemoryGeoTagStore.getInstance();
+  deletedGeoTag = tagStorage.getGeoTagById(req.params.id);
+  tagStorage.removeGeoTagById(req.params.id);
+
+  res.json(JSON.stringify(deletedGeoTag));
 })
 
 module.exports = router;
