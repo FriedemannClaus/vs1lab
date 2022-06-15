@@ -32,8 +32,6 @@ const GeoTagStore = require('../models/geotag-store');
 
 // App routes (A3)
 
-module.exports = router;
-
 /**
  * Route '/' for HTTP 'GET' requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -71,7 +69,7 @@ module.exports = router;
 router.post('/tagging', (req, res) => {
   let getTagStorage = InMemoryGeoTagStore.getInstance();
   getTagStorage.addGeoTag(new GeoTag(req.body["latitude"], req.body["longitude"], req.body["name"], req.body["hashtag"]));
-  let tempTagList = getTagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 100);
+  let tempTagList = getTagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5);
   res.render('index', { 
     taglist: tempTagList,
     ejs_latitude: req.body["latitude"],
@@ -123,21 +121,21 @@ router.post('/discovery', (req, res) => {
 
 // TODO: ... your code here ...
 
-//Warum radius 5/100?
 
 router.get('/api/geotags', (req, res) => {
   let TagStorage = InMemoryGeoTagStore.getInstance();
+  let tempTagList = []
   if (req.body["latitude"] >= 0 && req.body["longitude"] >= 0) {
-    if(req.body["query"] != undefined) {
-      let tempTagList = TagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
+    if(req.body["query"] != undefined) { //searchterm = query!
+      tempTagList = TagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
     } else {
-      let tempTagList = TagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 100);
+      tempTagList = TagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5);
     }
   } else {
     if(req.body["query"] != undefined) {
-      let tempTagList = TagStorage.searchGeoTags(req.body["query"]);
+      tempTagList = TagStorage.searchGeoTags(req.body["query"]);
     } else {
-      let tempTagList = TagStorage.getAllGeoTags();
+      tempTagList = TagStorage.getAllGeoTags();
     }
   }
 
@@ -147,27 +145,6 @@ router.get('/api/geotags', (req, res) => {
   });
 });
 
-router.post('/tagging', (req, res) => {
-  let getTagStorage = InMemoryGeoTagStore.getInstance();
-  getTagStorage.addGeoTag(new GeoTag(req.body["latitude"], req.body["longitude"], req.body["name"], req.body["hashtag"]));
-  let tempTagList = getTagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 100);
-  res.render('index', { 
-    taglist: tempTagList,
-    ejs_latitude: req.body["latitude"],
-    ejs_longitude: req.body["longitude"],
-    ejs_mapTagList: JSON.stringify(tempTagList) 
-  });
-});
-router.post('/discovery', (req, res) => {
-  let getTagStorage = InMemoryGeoTagStore.getInstance();
-  let tempTagList = getTagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
-  res.render('index', { 
-    taglist: tempTagList,
-    ejs_latitude: req.body["latitude"],
-    ejs_longitude: req.body["longitude"],
-    ejs_mapTagList: JSON.stringify(tempTagList)
-  });
-})
 
 
 /**
@@ -185,7 +162,7 @@ router.post('/discovery', (req, res) => {
 
 router.post('/api/geotags', (req, res) => {
   let tagStorage = InMemoryGeoTagStore.getInstance();
-  tagStorage.addGeoTag(new GeoTag(req.body["latitude"], req.body["longitude"], req.body["name"], req.body["tag"]));
+  tagStorage.addGeoTag(req.body()); // body/query
   let tempTagList = tagStorage.getAllGeoTags();
   res.render('index', { 
     taglist: tempTagList,
@@ -207,8 +184,8 @@ router.post('/api/geotags', (req, res) => {
 
 router.get('/api/geotags/:id', (req, res) => {
   let TagStorage = InMemoryGeoTagStore.getInstance();
-  let tempGeoTag = TagStorage.getGeoTagByName(req.params());
- //Id = name? No ID stored
+  let tempGeoTag = TagStorage.getGeoTagById(req.params.id); //ID!
+  //more code
   res.render({ 
     geoTag: JSON.stringify(tempGeoTag)
   });
@@ -232,7 +209,7 @@ router.get('/api/geotags/:id', (req, res) => {
 
 router.put('/api/geotags/:id', (req, res) => {
   let TagStorage = InMemoryGeoTagStore.getInstance();
-  TagStorage.removeGeoTag(req.params()); //id = name
+  TagStorage.removeGeoTagById(req.params()); //id = name? no
   TagStorage.addGeoTag(req.query());
   tempTagList = TagStorage.getAllGeoTags();
   res.render('index', { 
