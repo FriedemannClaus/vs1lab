@@ -13,6 +13,7 @@
 const { application, json } = require('express');
 const express = require('express');
 const router = express.Router();
+const url = require("url");
 
 /**
  * The module "geotag" exports a class GeoTagStore. 
@@ -125,15 +126,23 @@ router.post('/discovery', (req, res) => {
 router.get('/api/geotags', (req, res) => {
   let tagStorage = InMemoryGeoTagStore.getInstance();
   let tempTagList = [];
-  if (req.body["latitude"] >= 0 && req.body["longitude"] >= 0) {
-    if(req.body["query"] != undefined) { //searchterm = query!
-      tempTagList = tagStorage.searchNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5, req.body["query"]);
+  var query = url.parse(req.url, true).query;
+  console.log(query["latitude"]);
+  let radius = -1;
+  if(query["radius"] == undefined) {
+    radius = 5;
+  } else {
+    radius = query["radius"];
+  }
+  if (query["latitude"] >= 0 && query["longitude"] >= 0) {
+    if(query["searchterm"] != undefined) {
+      tempTagList = tagStorage.searchNearbyGeoTags(query["latitude"], query["longitude"], radius, query["searchterm"]);
     } else {
-      tempTagList = tagStorage.getNearbyGeoTags(req.body["latitude"], req.body["longitude"], 5);
+      tempTagList = tagStorage.getNearbyGeoTags(query["latitude"], query["longitude"], radius);
     }
   } else {
-    if(req.body["query"] != undefined) {
-      tempTagList = tagStorage.searchGeoTags(req.body["query"]);
+    if(query["searchterm"] != undefined) {
+      tempTagList = tagStorage.searchGeoTags(query["searchterm"]);
     } else {
       tempTagList = tagStorage.getAllGeoTags();
     }

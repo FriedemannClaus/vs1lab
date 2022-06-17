@@ -18,16 +18,16 @@
 # GET http:localhost:3000/api/geotags/3 HTTP/1.1 
 
 
-#  funktioniert:
-PUT http:localhost:3000/api/geotags/3 HTTP/1.1
-content-type: application/json
+# #  funktioniert:
+# PUT http:localhost:3000/api/geotags/3 HTTP/1.1
+# content-type: application/json
 
-{
-    "latitude": 49.0,
-    "longitude": 8.4,
-    "name": "Irgendwo",
-    "tag": "#somewhere"
-}
+# {
+#     "latitude": 49.0,
+#     "longitude": 8.4,
+#     "name": "Irgendwo",
+#     "tag": "#somewhere"
+# }
 
 # funktioniert:
 # DELETE http:localhost:3000/api/geotags/2 HTTP/1.1
@@ -62,13 +62,14 @@ content-type: application/json
 # }
 
 # Suchen:
-# GET http:localhost:3000/api/geotags/"query"="DochWoAnders" HTTP/1.1
-# content-type: ??
-# {
-#     "latitude": 50.2,
-#     "longitude": 9.1,
-#     "query": "DochWoAnders",
-# }
+GET http:localhost:3000/api/geotags/"query"="DochWoAnders" HTTP/1.1
+content-type: ??
+
+{
+    latitude: 50.2,
+    longitude: 9.1,
+    query: "DochWoAnders"
+}
 
 # Löschen:
 # DELETE http:localhost:3000/api/geotags/11 HTTP/1.1
