@@ -115,7 +115,7 @@ router.post('/discovery', (req, res) => {
  * (http://expressjs.com/de/4x/api.html#req.body)
  *
  * As a response, an array with Geo Tag objects is rendered as JSON.
- * If 'searchterm' is present, it will be filtered by search term.
+ * If 'searchterm' is present, it will be filtered by search term. "query" not "searchterm"
  * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
  */
 
@@ -159,13 +159,19 @@ router.get('/api/geotags', (req, res) => {
 
 router.post('/api/geotags', (req, res) => {
   let tagStorage = InMemoryGeoTagStore.getInstance();
-  newGeoTag = JSON.parse(req.query);
+  let simpleGeoTag = req.body;
+  let latitude = simpleGeoTag.latitude;
+  let longitude = simpleGeoTag.longitude;
+  let name = simpleGeoTag.name;
+  let tag = simpleGeoTag.tag;
+  let newGeoTag = new GeoTag(latitude, longitude, name, tag);
   tagStorage.addGeoTag(newGeoTag);
-  idString = this.toString(newGeoTag.getId());
-  url ='/api/geotags/'.concat(idString);
+  let url ='/api/geotags/' + newGeoTag.gtId;
   res.location(url);
+  console.log('newGeoTag.gtId' + newGeoTag.gtId);
+  console.log('url' + url);
   res.statusCode = 201; //Code stems from the Readme
-  res.json(req.query);
+  res.json(JSON.stringify(newGeoTag));
 })
 
 /**
@@ -184,7 +190,6 @@ router.get('/api/geotags/:id', (req, res) => {
   let tagStorage = InMemoryGeoTagStore.getInstance();
   let requestedGeoTag = tagStorage.getGeoTagById(req.params.id); //ID!
   res.json(JSON.stringify(requestedGeoTag));
-  res.json(JSON.stringify(tempTagList));
 });
 
 /**
@@ -206,8 +211,15 @@ router.get('/api/geotags/:id', (req, res) => {
 router.put('/api/geotags/:id', (req, res) => {
   let tagStorage = InMemoryGeoTagStore.getInstance();
   tagStorage.removeGeoTagById(req.params.id);
-  tagStorage.addGeoTag(JSON.parse(req.query));
-  res.json(req.query);
+  let simpleGeoTag = req.body;
+  let latitude = simpleGeoTag.latitude;
+  let longitude = simpleGeoTag.longitude;
+  let name = simpleGeoTag.name;
+  let tag = simpleGeoTag.tag;
+  let newGeoTag = new GeoTag(latitude, longitude, name, tag);
+  newGeoTag.gtId = req.params.id;
+  tagStorage.addGeoTag(newGeoTag);
+  res.json(JSON.stringify(newGeoTag));
 })
 
 /**
